@@ -1,0 +1,19 @@
+{
+  "accept": "application/json, text/plain, */*",
+  "accept-language": "en-US,en;q=0.9,id;q=0.8",
+  "content-type": "application/json",
+  "_activity_source": "gofood",
+  "origin": "https://gofood.co.id",
+  "priority": "u=1, i",
+  "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-ch-ua-platform": "\"Windows\"",
+  "sec-fetch-dest": "empty",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-site": "same-origin",
+  "tenant": "gofood",
+  "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+  "x-user-locale": "en",
+  "_cookie": "OptanonConsent=isGpcEnabled=0&datestamp=Tue+Mar+17+2026+09%3A47%3A01+GMT%2B0700+(Western+Indonesia+Time)&version=202405.2.0&browserGpcFlag=0&isIABGlobal=false&hosts=&consentId=bc6f0a3b-6118-43bf-adaf-fc3542a1e1e9&interactionCount=0&isAnonUser=1&landingPath=https%3A%2F%2Fgofood.co.id%2Fen%2Fsearch&groups=C0001%3A1%2CC0002%3A0%2CC0003%3A0; csrfSecret=5fsfrk77xE4LCWtFKV6FXYr9; XSRF-TOKEN=OMozq1XY-QHYb189DFk1F-foRji2au6qUXxk.JuYxu8h90j3kKYPsNpa2L30TugJ6mcZG1yfrUQkUfUU; w_tsfp=ltvuV0MF2utBvS0Q7qnulU6nEjojczs4h0wpEaR0f5thQLErU5mC0oF7u8LzM3TX5cxnvd7DsZoyJTLYCJI3dwMQQ52TJdsSjwjElYQh2N1AV0YxRJvYWVYcd711uTdFfnhCNxS00jA8eIUd379yilkMsyN1zap3TO14fstJ019E6KDQmI5uDW3HlFWQRzaLbjcMcuqPr6g18L5a5Wnd5Fiofw4hC7lDgkaShi5OXytyt0ezILoOMkircsj7SqA=",
+  "_note": "Cookie expired — re-capture from Chrome DevTools after a few hours. Right-click 'search' request → Copy as cURL → update the -b cookie value and paste here as _cookie"
+}

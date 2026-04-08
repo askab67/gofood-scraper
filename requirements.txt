@@ -1,0 +1,14 @@
+# GoFood Scraper — Python dependencies
+# Install: pip install -r requirements.txt
+
+requests>=2.31.0
+urllib3>=2.0.0
+shapely>=2.0.0
+pandas>=2.0.0
+streamlit>=1.35.0
+openpyxl>=3.1.0
+
+# Ambil cookie otomatis dari Chrome (untuk tombol "Ambil Cookie dari Chrome")
+# rookiepy: tidak butuh admin di Windows (recommended)
+# browser-cookie3: fallback
+browser-cookie3>=0.19.1

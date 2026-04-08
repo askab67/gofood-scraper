@@ -1,0 +1,25 @@
+08:22:05 INFO     Header: 14 | Cookie: 4 dari C:\Users\askab\Downloads\gofood_scraper\config\headers.json
+08:22:05 INFO     === Mulai: 5 kecamatan | serviceArea=lamongan ===
+08:22:05 INFO     Mulai scrape 5 kecamatan | serviceArea=lamongan | threads=2 | metode=_next/data kategori
+08:22:23 INFO     Build ID: 17.20.0
+08:22:23 WARNING  Kecamatan bluluk: HTTP 404
+08:22:23 INFO       [2/5] bluluk: 403 & polygon tidak ada di GeoJSON → dilewati
+08:22:37 INFO     Build ID: 17.20.0
+08:22:37 WARNING  Kecamatan babat: HTTP 404
+08:22:37 INFO       [1/5] babat: 403 & polygon tidak ada di GeoJSON → dilewati
+08:22:40 INFO     Build ID: 17.20.0
+08:22:40 WARNING  Kecamatan deket: HTTP 404
+08:22:40 INFO       [4/5] deket: 403 & polygon tidak ada di GeoJSON → dilewati
+08:22:40 INFO     Saved 0 restaurants → data\result.csv
+08:22:40 INFO     Saved 0 restaurants → data\result.json
+08:22:40 INFO     💾 Autosave — 0 restoran | 3/5 kecamatan
+08:22:45 INFO     Build ID: 17.20.0
+08:22:45 WARNING  Kecamatan lamongan: HTTP 404
+08:22:45 INFO       [3/5] lamongan: 403 & polygon tidak ada di GeoJSON → dilewati
+08:22:47 INFO     Build ID: 17.20.0
+08:22:47 WARNING  Kecamatan mantup: HTTP 404
+08:22:47 INFO       [5/5] mantup: 403 & polygon tidak ada di GeoJSON → dilewati
+08:22:47 INFO     Saved 0 restaurants → data\result.csv
+08:22:47 INFO     Saved 0 restaurants → data\result.json
+08:22:47 INFO     ✅ Selesai | Kecamatan: 5 | Requests: 5 | Baru: 0 | Total: 0
+08:22:47 INFO     === Selesai ===
