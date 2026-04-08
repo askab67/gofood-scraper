@@ -1,184 +1,222 @@
-# GoFood Restaurant Scraper – Kabupaten Bangkalan
+# 🍴 GoFood Restaurant Scraper
 
-A modular, resumable Python tool for collecting restaurant data from GoFood
-within the administrative boundary of Kabupaten Bangkalan.
+Tool scraping data restoran GoFood untuk wilayah administratif tertentu di Indonesia, dibangun dengan Python dan Streamlit.
+
+> Dibuat untuk kebutuhan riset dan analisis data UMKM kuliner di Kabupaten Bangkalan, Madura.
 
 ---
 
-## Project Structure
+## 📸 Tampilan Aplikasi
+
+![Scraper UI](https://i.imgur.com/placeholder.png)
+
+
+---
+
+## ✨ Fitur Utama
+
+- **Scraping per kecamatan** via endpoint `_next/data` GoFood (tanpa Selenium)
+- **Fallback otomatis** untuk kecamatan kecil yang tidak punya halaman GoFood — menggunakan polygon GeoJSON + keyword search
+- **Deduplikasi otomatis** berdasarkan `restaurant_id` (uid)
+- **Multi-threading** — scrape beberapa kecamatan secara paralel
+- **Resume scraping** — lanjutkan dari titik terakhir jika terhenti
+- **Export CSV & Excel** langsung dari UI
+- **Reverse geocode** — isi kolom alamat otomatis dari koordinat (via Nominatim/OpenStreetMap)
+- **Merge hasil** dari beberapa run (pagi + malam) untuk coverage lebih lengkap
+- **Pilih daerah** — tersedia Bangkalan, Sampang, Pamekasan, Sumenep, Surabaya, atau input kustom
+- **Ambil cookie otomatis** dari browser Chrome (tombol 1 klik)
+
+---
+
+## 🗂 Struktur Project
 
 ```
 gofood_scraper/
-├── app.py               ← Streamlit GUI (main entry point)
-├── scraper.py           ← Core HTTP scraping engine
-├── grid_generator.py    ← Coordinate grid generation
-├── polygon_filter.py    ← GeoJSON polygon loading & point-in-polygon test
-├── deduplicate.py       ← Deduplication, CSV/JSON persistence, multi-run merge
+├── app.py                  # UI Streamlit (entry point)
+├── scraper.py              # Engine scraping utama
+├── polygon_filter.py       # Load GeoJSON, ekstrak polygon per kecamatan
+├── grid_generator.py       # Generate titik koordinat dalam polygon
+├── deduplicate.py          # Manajemen store restoran & dedup
+├── fix_csv.py              # Konversi CSV ke Excel rapi
 ├── requirements.txt
-├── README.md
 │
 ├── config/
-│   └── headers.json     ← Chrome request headers (you fill this in)
+│   └── headers.json        # Cookie & headers GoFood (auto-generated)
 │
 └── data/
-    ├── bangkalan.geojson  ← Administrative boundary (you provide this)
-    ├── result.csv         ← Output (auto-created)
-    └── result.json        ← Output (auto-created)
+    ├── bangkalan.geojson   # Batas kecamatan Bangkalan (sediakan sendiri)
+    ├── result.csv          # Output scraping
+    └── result.json         # Output scraping (format JSON)
 ```
 
 ---
 
-## Quick Start
+## ⚙️ Instalasi
 
-### 1. Install dependencies
+### 1. Clone repository
+
+```bash
+git clone https://github.com/askab67gofood-scraper.git
+cd gofood-scraper
+```
+
+### 2. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Capture GoFood API headers from Chrome
-
-This step is **required** — GoFood's API requires a session token.
-
-1. Open **https://gofood.co.id** in Chrome (log in if needed).
-2. Press **F12** → **Network** tab → enable **Preserve log**.
-3. Search for a restaurant in the Bangkalan area on the website.
-4. In the Network panel, filter by **Fetch/XHR**.
-5. Look for a request URL containing `outlets`, `search`, or `restaurants`.
-6. Click the request → **Headers** → copy all **Request Headers**.
-7. Also note the exact **Request URL** and query parameter names.
-8. Paste the headers into `config/headers.json`.
-9. Update `SEARCH_URL` and `_parse_restaurant()` in `scraper.py` to match
-   the real endpoint and response schema you observed.
-
-### 3. Provide the GeoJSON boundary
-
-Place your GeoJSON boundary file at `data/bangkalan.geojson`, or upload it
-via the Streamlit UI.
-
-### 4. Run the Streamlit app
+### 3. Jalankan aplikasi
 
 ```bash
 streamlit run app.py
 ```
 
-Open http://localhost:8501 in your browser.
+Buka browser di `http://localhost:8501`
 
 ---
 
-## How It Works
+## 🚀 Cara Penggunaan
 
-```
-GeoJSON → RegionPolygon
-                ↓
-         generate_grid()          (e.g. ~1200 points at 0.01° density)
-                ↓
-    for each (lat, lon) point:
-         GoFood Search API  →  list of raw outlets
-                ↓
-         _parse_restaurant()      (normalise field names)
-                ↓
-         region.contains()        (spatial filter)
-                ↓
-         store.add()              (deduplication by restaurant_id)
-                ↓
-    periodic autosave → result.csv + result.json
-```
+### Langkah 1 — Ambil Cookie GoFood
 
----
+Cookie diperlukan agar GoFood mengizinkan akses data.
 
-## Configuration Reference
+**Cara otomatis (direkomendasikan):**
+1. Pastikan sudah pernah membuka `gofood.co.id` di Chrome
+2. **Tutup Chrome** terlebih dahulu
+3. Di sidebar app, klik tombol **🍪 Ambil Cookie dari Chrome**
+4. Cookie tersimpan otomatis ke `config/headers.json`
 
-| Setting | Default | Description |
-|---------|---------|-------------|
-| `grid_density` | 0.01° | ~1.1 km step size. Smaller = more coverage + more requests. |
-| `search_radius` | 2.0 km | Radius sent to the GoFood API per point. |
-| `delay_min` | 0.8 s | Minimum random delay between requests. |
-| `delay_max` | 2.5 s | Maximum random delay between requests. |
-| `max_threads` | 3 | Parallel worker threads. |
-| `fetch_details` | False | If True, also fetches the detail page per restaurant. |
-| `resume_scraping` | True | Load existing result.csv and skip known restaurant_ids. |
+> ⚠️ Cookie biasanya expired setelah **1–4 jam**. Klik tombol lagi jika muncul error 403.
 
----
+**Cara manual (jika otomatis gagal):**
+1. Buka `gofood.co.id` di Chrome
+2. Tekan `F12` → tab **Network** → centang **Preserve log**
+3. Lakukan pencarian restoran
+4. Klik kanan request `search` → **Copy → Copy as cURL (bash)**
+5. Buat file `config/headers.json`:
 
-## Adapting to the Real GoFood API
-
-The two places you **must** edit after capturing your headers:
-
-### 1. `scraper.py` — endpoint URLs
-
-```python
-SEARCH_URL = "https://gofood.co.id/api/outlets/v1/search"   # ← update
-DETAIL_URL  = "https://gofood.co.id/api/outlets/v1/{outlet_id}"  # ← update
-```
-
-### 2. `scraper.py` — query parameters in `_search_restaurants_at_point()`
-
-```python
-params = {
-    "lat": lat,
-    "long": lon,      # ← might be "lng", "longitude", etc.
-    "radius": radius_km,
-    "page": page,
-    "pageSize": page_size,
+```json
+{
+  "accept": "application/json, text/plain, */*",
+  "accept-language": "id-ID,id;q=0.9",
+  "user-agent": "Mozilla/5.0 ...",
+  "_cookie": "OptanonConsent=...; csrfSecret=...; XSRF-TOKEN=...; w_tsfp=..."
 }
 ```
 
-### 3. `scraper.py` — response field names in `_parse_restaurant()`
+---
+
+### Langkah 2 — Siapkan GeoJSON (opsional tapi direkomendasikan)
+
+GeoJSON batas kecamatan diperlukan untuk scrape kecamatan kecil yang tidak punya halaman GoFood sendiri.
+
+- Download dari [Geoportal BIG](https://tanahair.indonesia.go.id/) atau [geoportal.bangkalankab.go.id](http://geoportal.bangkalankab.go.id)
+- Format: GeoJSON FeatureCollection dengan field `WADMKC` (nama kecamatan) di properties
+- Taruh di `data/bangkalan.geojson` atau upload langsung via UI
+
+---
+
+### Langkah 3 — Pilih Daerah & Mulai Scraping
+
+1. Pilih daerah di sidebar (Bangkalan, Sampang, dll)
+2. Upload GeoJSON jika tersedia
+3. Klik **▶ Mulai Scraping**
+4. Pantau progress di log
+5. Download hasil di tab **Hasil**
+
+---
+
+## 📊 Output Data
+
+| Field | Deskripsi | Contoh |
+|---|---|---|
+| `restaurant_id` | ID unik GoFood | `4deb51ef-f66c-...` |
+| `restaurant_name` | Nama restoran | `Warung Sate Madura` |
+| `category` | Kategori makanan | `Sate, Ayam` |
+| `rating` | Rating rata-rata | `4.8` |
+| `review_count` | Jumlah ulasan | `312` |
+| `address` | Alamat (dari reverse geocode) | `Jl. Raya Bangkalan No. 45` |
+| `latitude` | Koordinat lintang | `-7.0269` |
+| `longitude` | Koordinat bujur | `112.7548` |
+| `opening_hours` | Jam operasional | `Mon:10:00-22:00 \| Tue:10:00-22:00` |
+| `price_range` | Level harga (1-4) | `Level 2` |
+| `is_open_status` | Status buka/tutup | `open` |
+| `resto_url` | URL halaman GoFood | `https://gofood.co.id/...` |
+
+---
+
+## 🏗 Cara Kerja
+
+```
+Upload GeoJSON → extract 18 polygon kecamatan
+                        │
+        ┌───────────────┴───────────────┐
+        │                               │
+   Kecamatan besar                Kecamatan kecil
+   (bangkalan, kamal)             (burneh, socah, dll)
+        │                               │
+   _next/data endpoint            Polygon dari GeoJSON
+   → dapat semua kategori         → generate 2-3 titik koordinat
+   → tiap kategori → outlet list  → search keyword (nasi, ayam, sate...)
+        │                               │
+        └───────────────┬───────────────┘
+                        │
+               Dedup by uid
+                        │
+               Filter spasial
+                        │
+               Simpan CSV + JSON
+```
+
+---
+
+## 💡 Tips
+
+- **Jalankan 2x** (siang + malam) untuk hasil lebih lengkap — restoran yang tutup di satu waktu mungkin buka di waktu lain
+- **Gunakan tab Merge** untuk gabungkan hasil beberapa run
+- **Isi alamat** menggunakan tab **🗺 Peta Alamat** setelah scraping selesai
+- **Kurangi threads ke 1** jika sering kena error 403/429
+
+---
+
+## 🔧 Menambah Daerah Baru
+
+Edit `KNOWN_AREAS` di `app.py`:
 
 ```python
-rid  = raw.get("id") or raw.get("outletId") ...   # ← match real field name
-name = raw.get("name") or raw.get("outletName") ... # ← match real field name
+"Kabupaten Gresik": {
+    "service_area": "surabaya",
+    "localities": ["gresik", "kebomas", "manyar", "bungah", ...],
+},
 ```
 
-Use Chrome DevTools → Preview tab on the captured XHR request to inspect
-the exact JSON structure returned by the API.
+Cara cari `serviceArea` dan `locality`:
+1. Buka GoFood, pilih lokasi yang diinginkan
+2. Lihat URL: `gofood.co.id/id/{serviceArea}/{locality}-restaurants`
 
 ---
 
-## Running Multiple Times & Merging
+## 📦 Dependencies
 
-```bash
-# Run 1 (daytime — catches open restaurants)
-streamlit run app.py   # → data/result.csv
-
-# Run 2 (evening — catches restaurants only open at night)
-# Move result.csv to data/run2/result.csv first, then run again
-
-# Merge in the UI — use the "Merge Runs" tab
-# Or from Python:
-from deduplicate import merge_result_files
-merge_result_files("data/run1/result.csv", "data/run2/result.csv",
-                   output_csv="data/result_final.csv",
-                   output_json="data/result_final.json")
-```
+| Library | Kegunaan |
+|---|---|
+| `requests` | HTTP requests ke GoFood API |
+| `streamlit` | UI aplikasi |
+| `shapely` | Operasi geometri polygon |
+| `pandas` | Manipulasi data & export |
+| `openpyxl` | Export ke Excel |
+| `rookiepy` / `browser-cookie3` | Ambil cookie Chrome otomatis |
 
 ---
 
-## Expected Output
+## ⚠️ Disclaimer
 
-| Field | Example |
-|-------|---------|
-| `restaurant_id` | `abc123` |
-| `restaurant_name` | `Warung Nasi Pecel Bu Siti` |
-| `category` | `Indonesian` |
-| `rating` | `4.7` |
-| `review_count` | `312` |
-| `address` | `Jl. Raya Bangkalan No. 45` |
-| `latitude` | `-7.0512` |
-| `longitude` | `112.7483` |
-| `opening_hours` | `Mon: 08:00-21:00 \| Tue: 08:00-21:00 ...` |
-| `menu_count` | `24` |
-| `price_range` | `Rp 10.000 – Rp 50.000` |
-| `is_open_status` | `True` |
-
-Estimated unique restaurants in Bangkalan: **1,000 – 3,000**.
+Tool ini dibuat untuk keperluan **riset dan analisis data** saja. Penggunaan harus mematuhi Terms of Service GoFood/Gojek. Jangan gunakan untuk tujuan komersial tanpa izin.
 
 ---
 
-## Legal & Ethical Notes
+## 📄 Lisensi
 
-- This tool is for **research and data analysis purposes only**.
-- Always respect GoFood's Terms of Service and `robots.txt`.
-- Use reasonable delays (≥ 0.8 s) to avoid overloading their servers.
-- Do not redistribute collected data commercially without permission.
+MIT License — bebas digunakan dan dimodifikasi untuk keperluan non-komersial.
