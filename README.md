@@ -8,7 +8,7 @@ Tool scraping data restoran GoFood untuk wilayah administratif tertentu di Indon
 
 ## 📸 Tampilan Aplikasi
 
-![Scraper UI](https://i.imgur.com/placeholder.png)
+![Scraper UI](https://i.ibb.co.com/DDbHqjM5/Screenshot-2026-03-18-013144.png)
 
 
 ---
@@ -56,7 +56,7 @@ gofood_scraper/
 ### 1. Clone repository
 
 ```bash
-git clone https://github.com/askab67gofood-scraper.git
+git clone https://github.com/askab67/gofood-scraper.git
 cd gofood-scraper
 ```
 
@@ -210,10 +210,25 @@ Cara cari `serviceArea` dan `locality`:
 | `rookiepy` / `browser-cookie3` | Ambil cookie Chrome otomatis |
 
 ---
+## 🛠 Troubleshooting (Masalah Umum)
+
+**1. Error: `'streamlit' is not recognized as an internal or external command`**
+Ini terjadi karena Streamlit belum terinstall atau tidak masuk ke Windows PATH.
+**Solusi:**
+Buka terminal dan ketik perintah ini secara manual:
+`pip install streamlit`
+Lalu jalankan aplikasi dengan perintah alternatif ini:
+`python -m streamlit run app.py`
+
+**2. Error: ModuleNotFoundError**
+Pastikan kamu sudah menginstal semua library. Ketik:
+`pip install -r requirements.txt`
+
+---
 
 ## ⚠️ Disclaimer
 
-Tool ini dibuat untuk keperluan **riset dan analisis data** saja. Penggunaan harus mematuhi Terms of Service GoFood/Gojek. Jangan gunakan untuk tujuan komersial tanpa izin.
+Tool ini dibuat untuk keperluan **BPS KABUPATEN BANGKALAN**. Penggunaan harus mematuhi Terms of Service GoFood/Gojek. Jangan gunakan untuk tujuan komersial tanpa izin.
 
 ---
 
